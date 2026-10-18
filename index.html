@@ -269,10 +269,32 @@
     <p class="modal-text">Please talk to your coach for further instructions.</p>
     <p class="modal-text">Enjoy your class.</p>
     <div id="modalActions">
-      <label class="modal-check" for="movementCheck">
-        <input type="checkbox" id="movementCheck">
-        <span>I have <strong>not</strong> yet completed my movement assessment.</span>
-      </label>
+      <p class="modal-text" style="margin-bottom:12px">I have completed my <strong>complimentary movement assessment</strong> and interview.</p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-bottom:12px">
+        <button class="btn btn-red" id="fmsYesBtn" type="button" style="flex:1">Yes</button>
+        <button class="btn" id="fmsNoBtn" type="button" style="flex:1">No</button>
+      </div>
+      <div id="fmsScheduleWrap" style="display:none;margin-bottom:12px">
+        <p class="modal-text">Pick a time for your complimentary movement assessment:</p>
+        <p class="modal-text" style="font-size:13px;opacity:0.8">Mon–Thu · 10:30 AM–12:00 PM or 1:30 PM–3:30 PM</p>
+        <select id="fmsDay" style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px">
+          <option value="">Select day…</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+        </select>
+        <select id="fmsTime" style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px">
+          <option value="">Select time…</option>
+          <option value="10:30 AM">10:30 AM</option>
+          <option value="11:00 AM">11:00 AM</option>
+          <option value="11:30 AM">11:30 AM</option>
+          <option value="1:30 PM">1:30 PM</option>
+          <option value="2:00 PM">2:00 PM</option>
+          <option value="2:30 PM">2:30 PM</option>
+          <option value="3:00 PM">3:00 PM</option>
+        </select>
+      </div>
       <button class="btn btn-red" id="modalDoneBtn" type="button">Done</button>
       <p class="status" id="modalStatus" role="status"></p>
       <div id="modalRetryWrap" style="display:none">
@@ -593,16 +615,18 @@ function showConfirmModal(){
   if(modal) modal.classList.add('open');
 }
 
+var fmsAnswer = ''; // 'yes' or 'no'
+
 function handleModalDone(){
-  var checked = false;
-  var box = $('movementCheck');
-  if(box) checked = !!box.checked;
-  // Record the tap-in, now including movement_assessment. The checkbox
-  // reads "I have NOT yet completed…", so checked records
-  // "not completed"; unchecked records "completed". When the send
-  // resolves, the normal close-tab flow runs; only a send that throws
-  // shows the calm inline retry right here in the modal.
-  var movement = checked ? 'not completed' : 'completed';
+  // Yes = completed, No = not completed (with optional scheduling).
+  // Never blocks — the tap-in always sends.
+  var movement = 'completed';
+  if(fmsAnswer === 'no'){
+    var day = $('fmsDay') ? $('fmsDay').value : '';
+    var time = $('fmsTime') ? $('fmsTime').value : '';
+    movement = 'not completed';
+    if(day && time) movement += ' - scheduled ' + day + ' ' + time;
+  }
   lastMovement = movement;
   doSend();
 }
@@ -628,6 +652,24 @@ function handleModalDone(){
   $('skipPhotoBtn').addEventListener('click', skipPhoto);
   var modalDone = $('modalDoneBtn');
   if(modalDone) modalDone.addEventListener('click', handleModalDone);
+  var fmsYes = $('fmsYesBtn');
+  if(fmsYes) fmsYes.addEventListener('click', function(){
+    fmsAnswer = 'yes';
+    fmsYes.style.opacity = '1';
+    var noBtn = $('fmsNoBtn');
+    if(noBtn) noBtn.style.opacity = '0.5';
+    var sched = $('fmsScheduleWrap');
+    if(sched) sched.style.display = 'none';
+  });
+  var fmsNo = $('fmsNoBtn');
+  if(fmsNo) fmsNo.addEventListener('click', function(){
+    fmsAnswer = 'no';
+    fmsNo.style.opacity = '1';
+    var yesBtn = $('fmsYesBtn');
+    if(yesBtn) yesBtn.style.opacity = '0.5';
+    var sched = $('fmsScheduleWrap');
+    if(sched) sched.style.display = 'block';
+  });
   var modalRetry = $('modalRetryBtn');
   if(modalRetry) modalRetry.addEventListener('click', handleModalRetry);
   var closeTab = $('closeTabBtn');
