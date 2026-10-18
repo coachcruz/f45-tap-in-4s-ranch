@@ -474,9 +474,13 @@ function onPhotoCaptured(){
   publishPhoto(URL.createObjectURL(input.files[0]));
 }
 
+var photoFile = null;
+
 function publishPhoto(url){
   if(photoUrl && photoUrl.indexOf('blob:') === 0){ try{ URL.revokeObjectURL(photoUrl); }catch(e){} }
   photoUrl = url;
+  var input = $('photoInput');
+  photoFile = (input.files && input.files[0]) ? input.files[0] : null;
   var img = $('photoPreview');
   img.src = photoUrl;
   $('photoPreviewWrap').style.display = 'block';
@@ -489,6 +493,7 @@ function usePhoto(){
 
 function skipPhoto(){
   photoUrl = '';
+  photoFile = null;
   showDone();
 }
 
@@ -519,10 +524,43 @@ function submitTapInRecord(movementAssessment){
     reason: (r === '—') ? '' : r,
     movementAssessment: movementAssessment
   };
-  return fetch(BACKEND_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) }).then(function(){
-    return true;
-  }, function(){
-    return false;
+  // Convert photo to downscaled base64 JPEG so it actually reaches the backend.
+  return photoToBase64().then(function(photoData){
+    if(photoData) data.photo = photoData;
+    return fetch(BACKEND_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) }).then(function(){
+      return true;
+    }, function(){
+      return false;
+    });
+  });
+}
+
+/* Reads the captured photo file, downscales to max 800px, returns base64 JPEG.
+   Resolves with null if no photo was taken. */
+function photoToBase64(){
+  return new Promise(function(resolve){
+    if(!photoFile){ resolve(null); return; }
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var maxDim = 800;
+        var w = img.width, h = img.height;
+        if(w > maxDim || h > maxDim){
+          var scale = maxDim / Math.max(w, h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.onerror = function(){ resolve(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ resolve(null); };
+    reader.readAsDataURL(photoFile);
   });
 }
 
