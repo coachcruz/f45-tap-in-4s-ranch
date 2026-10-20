@@ -385,43 +385,10 @@ function proceedFromReason(){
     otherText = '';
   }
 
-  // Contact Picker API — tapping the reason tile is the share gesture.
-  if('contacts' in navigator && navigator.contacts && 'select' in navigator.contacts){
-    navigator.contacts.select(['name','tel','email'], {multiple:false}).then(function(contacts){
-      if(contacts && contacts[0]){
-        var c = contacts[0];
-        captured.name  = (c.name  && c.name[0])  || '';
-        captured.phone = (c.tel   && c.tel[0])   || '';
-        captured.email = (c.email && c.email[0]) || '';
-        $('f-name').value  = captured.name;
-        $('f-phone').value = captured.phone;
-        $('f-email').value = captured.email;
-        if(captured.name && captured.phone && captured.email){
-          go('s-photo');
-        } else {
-          // Name, phone AND email are all required — if the picked
-          // contact is missing one, show the fields prefilled so the
-          // guest can add what's missing instead of the tap-in being
-          // incomplete.
-          $('reasonStatus').textContent = 'Almost there — add the missing detail below.';
-          revealContactForm();
-        }
-        return;
-      }
-      // Picker dismissed with no selection: stay on the reason screen.
-      $('reasonStatus').textContent = 'No contact was selected — tap your reason again to try again.';
-    }, function(err){
-      if(err && err.name === 'AbortError'){
-        // Picker cancelled: stay on the reason screen.
-        $('reasonStatus').textContent = 'No contact was selected — tap your reason again to try again.';
-      } else {
-        revealContactForm();
-      }
-    });
-  } else {
-    // No Contact Picker (e.g. iPhone): reveal the autofill fields inline.
-    revealContactForm();
-  }
+  // Always show the inline contact form. The browser's own autofill
+  // (autocomplete=name/tel/email) still offers the visitor's details
+  // without hijacking the tap into the contacts app.
+  revealContactForm();
 }
 
 function revealContactForm(){
