@@ -76,12 +76,14 @@
   body.light .ack{background:rgba(0,0,0,.22); color:#f5f2ea;}
   .status{margin-top:12px; font-size:14px; line-height:1.5; color:var(--cream-dim); min-height:1.2em;}
   .tile-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;}
-  .tile{appearance:none; -webkit-appearance:none; touch-action:manipulation; border:1.5px solid var(--line); background:rgba(0,0,0,.22); color:var(--cream);
+  .tile{appearance:none; -webkit-appearance:none; touch-action:manipulation; border:1.5px solid rgba(255,255,255,.28);
+    background:linear-gradient(180deg,#ff4d5c,var(--red) 55%,var(--red-dark)); color:#fff;
+    box-shadow:0 8px 22px rgba(246,55,70,.30), inset 0 1px 0 rgba(255,255,255,.35);
     border-radius:14px; padding:16px 12px; min-height:64px; cursor:pointer;
     font-family:'Barlow Condensed'; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
     font-size:18px; line-height:1.1; text-align:center;}
   .tile:active{transform:scale(.985)}
-  .tile.selected{border-color:var(--red); background:rgba(246,55,70,.16); box-shadow:0 0 0 1px var(--red);}
+  .tile.selected{border-color:#fff; background:linear-gradient(180deg,#c81f2e,#8f1220); box-shadow:0 0 0 2px #fff, 0 8px 22px rgba(0,0,0,.4);}
   .tile-wide{grid-column:1 / -1;}
   .rev-row{display:flex; align-items:center; justify-content:space-between; gap:10px;
     padding:13px 2px; border-bottom:1px solid var(--line); font-size:17px;}
@@ -94,11 +96,22 @@
   .done-photo{width:88px; height:88px; border-radius:50%; object-fit:cover; flex-shrink:0;
     border:2px solid rgba(245,242,234,.25); background:rgba(0,0,0,.3);}
   .done-name{font-family:'Barlow Condensed'; font-weight:700; font-size:34px; text-transform:uppercase; line-height:1; word-break:break-word;}
-  .photo-preview-wrap{margin-top:16px; display:none;}
-  .photo-preview{width:100%; max-height:380px; object-fit:cover; border-radius:14px; display:block;
+  .photo-preview-wrap{margin-top:14px; display:none;}
+  .photo-preview{width:100%; height:min(360px,36dvh); object-fit:cover; border-radius:14px; display:block;
     border:1px solid var(--line); background:rgba(0,0,0,.3);}
-  .photo-actions{display:flex; gap:10px; margin-top:14px;}
-  .photo-actions .btn{margin-top:0; font-size:16px; padding:14px 10px;}
+  .photo-actions{display:flex; gap:10px; margin-top:12px;}
+  .photo-actions .btn{margin-top:0; font-size:16px; padding:13px 10px;}
+  /* Skip stays available but quiet — the photo is what we want. */
+  .skip-link{display:block; margin:8px auto 0; background:none; border:0; color:var(--cream-dim);
+    font-size:14px; font-weight:600; text-decoration:underline; text-underline-offset:3px;
+    cursor:pointer; padding:8px 12px; touch-action:manipulation;}
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px;}
+  .chip{appearance:none; -webkit-appearance:none; touch-action:manipulation; cursor:pointer;
+    border:1.5px solid var(--line); background:rgba(0,0,0,.22); color:var(--cream); border-radius:999px;
+    padding:10px 14px; font-family:'Barlow Condensed'; font-weight:600; letter-spacing:.06em; font-size:16px;}
+  .chip.selected{background:linear-gradient(180deg,#ff4d5c,var(--red) 55%,var(--red-dark)); color:#fff; border-color:rgba(255,255,255,.4);}
+  .sched-label{font-family:'Barlow Condensed'; font-weight:600; letter-spacing:.14em; font-size:13px;
+    text-transform:uppercase; color:var(--cream-dim); margin-top:14px;}
   .stage{display:none; animation:fade .28s ease;}
   .stage.on{display:block;}
   @keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
@@ -146,8 +159,8 @@
     box-shadow:0 8px 26px rgba(246,55,70,.38), inset 0 1px 0 rgba(255,255,255,.35);}
   body.light .field input, body.light .field textarea{background:rgba(0,0,0,.28); color:#f5f2ea;}
   body.light .field input::placeholder, body.light .field textarea::placeholder{color:rgba(245,242,234,.42);}
-  body.light .tile{background:rgba(0,0,0,.22); color:#f5f2ea;}
-  body.light .tile.selected{background:rgba(246,55,70,.16);}
+  body.light .tile{background:linear-gradient(180deg,#ff4d5c,var(--red) 55%,var(--red-dark)); color:#fff;}
+  body.light .tile.selected{background:linear-gradient(180deg,#c81f2e,#8f1220);}
   body.light .hint{background:rgba(47,95,195,.14);}
   body.light .error{color:#ffb3ba;}
   body.light .done-photo{border-color:rgba(245,242,234,.25); background:rgba(0,0,0,.3);}
@@ -158,12 +171,14 @@
     padding:22px; background:rgba(10,14,28,.78);}
   .modal-overlay.open{display:flex;}
   .modal-panel{width:100%; max-width:380px; border-radius:18px; padding:26px 22px 22px;
+    max-height:92dvh; overflow-y:auto;
     background:linear-gradient(180deg, var(--card) 0%, var(--navy) 100%);
     border:1px solid var(--line); border-top:3px solid var(--red);
     box-shadow:0 24px 60px rgba(0,0,0,.5); color:var(--cream); animation:fade .28s ease;}
   .modal-title{font-family:'Barlow Condensed'; font-weight:700; text-transform:uppercase;
     font-size:36px; line-height:1; letter-spacing:.01em;}
   .modal-text{margin-top:12px; font-size:16px; line-height:1.55; color:var(--cream-dim);}
+  .modal-big{margin-top:14px; font-size:21px; font-weight:700; line-height:1.4; color:var(--cream);}
   .modal-check{display:flex; align-items:flex-start; gap:12px; margin-top:20px; cursor:pointer;
     font-size:16px; line-height:1.45; color:var(--cream);}
   .modal-check input{width:22px; height:22px; flex-shrink:0; margin-top:1px; accent-color:var(--red); cursor:pointer;}
@@ -243,7 +258,7 @@
     <div class="kicker">Almost done</div>
     <h1>Take your<br>profile photo</h1>
     <div class="card">
-      <p class="prompt-sub" style="margin-top:0">Tap below to open your camera. You’ll get to approve the photo — or retake it — before you finish.</p>
+      <p class="prompt-sub" id="photoPrompt" style="margin-top:0">Tap below to open your camera. You’ll get to approve the photo — or retake it — before you finish.</p>
       <input type="file" id="photoInput" accept="image/*" capture="user" style="display:none">
       <button class="btn btn-red" id="openCameraBtn" type="button">Open camera</button>
 
@@ -255,7 +270,7 @@
         </div>
       </div>
 
-      <button class="btn btn-ghost" id="skipPhotoBtn" type="button">Continue without a photo</button>
+      <button class="skip-link" id="skipPhotoBtn" type="button">Continue without a photo</button>
     </div>
   </section>
 
@@ -281,35 +296,30 @@
 <!-- CONFIRMATION MODAL — appears after the Done screen renders -->
 <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
   <div class="modal-panel">
-    <h2 class="modal-title" id="confirmTitle">Almost done!</h2>
-    <p class="modal-text">Please talk to your coach for further instructions.</p>
+    <h2 class="modal-title" id="confirmTitle">You’re all set!</h2>
+    <p class="modal-big">Please see your coach for station assignment.</p>
     <p class="modal-text">Enjoy your class.</p>
     <div id="modalActions">
-      <p class="modal-text" style="margin-bottom:12px">I have completed my <strong>complimentary movement assessment</strong> and interview.</p>
+      <p class="modal-text" style="margin-bottom:12px">Have you completed your <strong>complimentary movement assessment</strong>?</p>
       <div style="display:flex;gap:12px;justify-content:center;margin-bottom:12px">
         <button class="btn btn-red" id="fmsYesBtn" type="button" style="flex:1">Yes</button>
         <button class="btn" id="fmsNoBtn" type="button" style="flex:1">No</button>
       </div>
       <div id="fmsScheduleWrap" style="display:none;margin-bottom:12px">
-        <p class="modal-text">Pick a time for your complimentary movement assessment:</p>
-        <p class="modal-text" style="font-size:13px;opacity:0.8">Mon–Thu · 10:30 AM–12:00 PM or 1:30 PM–3:30 PM</p>
-        <select id="fmsDay" style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px">
-          <option value="">Select day…</option>
-          <option value="Monday">Monday</option>
-          <option value="Tuesday">Tuesday</option>
-          <option value="Wednesday">Wednesday</option>
-          <option value="Thursday">Thursday</option>
-        </select>
-        <select id="fmsTime" style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px">
-          <option value="">Select time…</option>
-          <option value="10:30 AM">10:30 AM</option>
-          <option value="11:00 AM">11:00 AM</option>
-          <option value="11:30 AM">11:30 AM</option>
-          <option value="1:30 PM">1:30 PM</option>
-          <option value="2:00 PM">2:00 PM</option>
-          <option value="2:30 PM">2:30 PM</option>
-          <option value="3:00 PM">3:00 PM</option>
-        </select>
+        <p class="modal-text">No problem — pick a day and time for your complimentary movement assessment:</p>
+        <p class="modal-text" style="font-size:13px;opacity:0.8">Monday–Friday · 1:30–3:30 PM · Sunday · 10:30–11:30 AM<br>Sessions run about 45 minutes.</p>
+        <div class="sched-label">Day</div>
+        <div class="chip-row" id="fmsDays">
+          <button class="chip" type="button" data-day="Monday">Mon</button>
+          <button class="chip" type="button" data-day="Tuesday">Tue</button>
+          <button class="chip" type="button" data-day="Wednesday">Wed</button>
+          <button class="chip" type="button" data-day="Thursday">Thu</button>
+          <button class="chip" type="button" data-day="Friday">Fri</button>
+          <button class="chip" type="button" data-day="Sunday">Sun</button>
+        </div>
+        <div class="sched-label">Time</div>
+        <div class="chip-row" id="fmsTimes"></div>
+        <p class="modal-text" id="fmsPickDayFirst" style="font-size:14px">Pick a day first — the times for that day show up here.</p>
       </div>
       <button class="btn btn-red" id="modalDoneBtn" type="button">Done</button>
       <p class="status" id="modalStatus" role="status"></p>
@@ -457,28 +467,109 @@ function openCamera(){
   $('photoInput').click();
 }
 
+var photoDataUrl = '';
+
 function onPhotoCaptured(){
   var input = $('photoInput');
   if(!input.files || !input.files[0]) return; // cancelled — stay, skip option remains
-  /* Show the photo exactly as the camera saved it — no mirroring, no
-     canvas re-encode. The camera already saves a front-camera selfie
-     the way the visitor saw it in the viewfinder; re-drawing it through
-     a canvas with a horizontal flip (or stripping its orientation in
-     the re-encode) is what flipped it in the preview and on Done. */
-  publishPhoto(URL.createObjectURL(input.files[0]));
+  processPhotoFile(input.files[0]);
 }
 
-var photoFile = null;
+/* Turn the camera file into the FINAL photo once — orientation baked
+   in from the file's EXIF tag, downscaled to max 800px. The preview,
+   the Done screen and the record that gets sent all use this exact
+   image, so the photo the visitor approves is the photo that gets
+   saved — it cannot flip between screens. (The old flow previewed the
+   raw camera file, which the browser displays with its orientation
+   applied, then re-drew it on a canvas that dropped the orientation —
+   the saved copy came out flipped.) */
+function processPhotoFile(file){
+  var getBuf = file.arrayBuffer ? file.arrayBuffer() : new Promise(function(res, rej){
+    var r = new FileReader();
+    r.onload = function(){ res(r.result); };
+    r.onerror = rej;
+    r.readAsArrayBuffer(file);
+  });
+  getBuf.then(function(buf){
+    var orientation = readExifOrientation(buf);
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function(){
+      try{
+        photoDataUrl = drawOriented(img, orientation, 800).toDataURL('image/jpeg', 0.7);
+      }catch(e){
+        photoDataUrl = '';
+      }
+      URL.revokeObjectURL(url);
+      if(photoDataUrl) publishPhoto();
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); };
+    img.src = url;
+  }).catch(function(){});
+}
 
-function publishPhoto(url){
-  if(photoUrl && photoUrl.indexOf('blob:') === 0){ try{ URL.revokeObjectURL(photoUrl); }catch(e){} }
-  photoUrl = url;
-  var input = $('photoInput');
-  photoFile = (input.files && input.files[0]) ? input.files[0] : null;
+function publishPhoto(){
+  photoUrl = photoDataUrl;
   var img = $('photoPreview');
-  img.src = photoUrl;
+  img.src = photoDataUrl;
   $('photoPreviewWrap').style.display = 'block';
+  var prompt = $('photoPrompt');
+  if(prompt) prompt.style.display = 'none';
   $('openCameraBtn').textContent = 'Open camera again';
+}
+
+/* Minimal EXIF orientation reader (JPEG APP1). Returns 1–8, default 1. */
+function readExifOrientation(buf){
+  try{
+    var view = new DataView(buf);
+    if(view.getUint16(0) !== 0xFFD8) return 1;
+    var offset = 2;
+    while(offset + 4 < view.byteLength){
+      var marker = view.getUint16(offset);
+      var size = view.getUint16(offset + 2);
+      if(marker === 0xFFE1 && view.getUint32(offset + 4) === 0x45786966){
+        var tiff = offset + 10;
+        var little = view.getUint16(tiff) === 0x4949;
+        var dir = tiff + view.getUint32(tiff + 4, little);
+        var count = view.getUint16(dir, little);
+        for(var i = 0; i < count; i++){
+          var entry = dir + 2 + i * 12;
+          if(view.getUint16(entry, little) === 0x0112){
+            var v = view.getUint16(entry + 8, little);
+            return (v >= 1 && v <= 8) ? v : 1;
+          }
+        }
+        return 1;
+      }
+      offset += 2 + size;
+    }
+  }catch(e){}
+  return 1;
+}
+
+/* Draw the image onto a canvas with its EXIF orientation applied and
+   the long edge capped at maxDim. Returns the canvas. */
+function drawOriented(img, orientation, maxDim){
+  var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  var scale = Math.min(1, maxDim / Math.max(w, h));
+  var dw = Math.max(1, Math.round(w * scale)), dh = Math.max(1, Math.round(h * scale));
+  var swap = orientation >= 5 && orientation <= 8;
+  var canvas = document.createElement('canvas');
+  canvas.width = swap ? dh : dw;
+  canvas.height = swap ? dw : dh;
+  var ctx = canvas.getContext('2d');
+  switch(orientation){
+    case 2: ctx.transform(-1, 0, 0, 1, dw, 0); break;
+    case 3: ctx.transform(-1, 0, 0, -1, dw, dh); break;
+    case 4: ctx.transform(1, 0, 0, -1, 0, dh); break;
+    case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+    case 6: ctx.transform(0, 1, -1, 0, dh, 0); break;
+    case 7: ctx.transform(0, -1, -1, 0, dh, dw); break;
+    case 8: ctx.transform(0, -1, 1, 0, 0, dw); break;
+    default: break;
+  }
+  ctx.drawImage(img, 0, 0, dw, dh);
+  return canvas;
 }
 
 function usePhoto(){
@@ -487,7 +578,7 @@ function usePhoto(){
 
 function skipPhoto(){
   photoUrl = '';
-  photoFile = null;
+  photoDataUrl = '';
   showDone();
 }
 
@@ -520,43 +611,13 @@ function submitTapInRecord(movementAssessment){
     waiver: captured.waiver || '',
     clientId: clientId
   };
-  // Convert photo to downscaled base64 JPEG so it actually reaches the backend.
-  return photoToBase64().then(function(photoData){
-    if(photoData) data.photo = photoData;
-    return fetch(BACKEND_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) }).then(function(){
-      return true;
-    }, function(){
-      return false;
-    });
-  });
-}
-
-/* Reads the captured photo file, downscales to max 800px, returns base64 JPEG.
-   Resolves with null if no photo was taken. */
-function photoToBase64(){
-  return new Promise(function(resolve){
-    if(!photoFile){ resolve(null); return; }
-    var reader = new FileReader();
-    reader.onload = function(e){
-      var img = new Image();
-      img.onload = function(){
-        var maxDim = 800;
-        var w = img.width, h = img.height;
-        if(w > maxDim || h > maxDim){
-          var scale = maxDim / Math.max(w, h);
-          w = Math.round(w * scale);
-          h = Math.round(h * scale);
-        }
-        var canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.7));
-      };
-      img.onerror = function(){ resolve(null); };
-      img.src = e.target.result;
-    };
-    reader.onerror = function(){ resolve(null); };
-    reader.readAsDataURL(photoFile);
+  // The photo was already finalized at capture time (orientation
+  // baked in, downscaled) — send those exact bytes.
+  if(photoDataUrl) data.photo = photoDataUrl;
+  return fetch(BACKEND_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) }).then(function(){
+    return true;
+  }, function(){
+    return false;
   });
 }
 
@@ -656,6 +717,8 @@ function showConfirmModal(){
 }
 
 var fmsAnswer = ''; // 'yes' or 'no'
+var fmsDay = '';    // chip choice in the scheduling picker
+var fmsTime = '';   // chip choice in the scheduling picker
 
 function handleModalDone(){
   // Yes = completed, No = not completed (with optional scheduling).
@@ -665,10 +728,8 @@ function handleModalDone(){
   if(fmsAnswer === 'yes'){
     movement = 'completed';
   } else if(fmsAnswer === 'no'){
-    var day = $('fmsDay') ? $('fmsDay').value : '';
-    var time = $('fmsTime') ? $('fmsTime').value : '';
     movement = 'not completed';
-    if(day && time) movement += ' - scheduled ' + day + ' ' + time;
+    if(fmsDay && fmsTime) movement += ' - scheduled ' + fmsDay + ' ' + fmsTime;
   }
   lastMovement = movement;
   doSend();
@@ -718,6 +779,43 @@ function handleModalDone(){
     var sched = $('fmsScheduleWrap');
     if(sched) sched.style.display = 'block';
   });
+  // Scheduling chips — individual tappable options, no dropdowns.
+  // Windows (Cruz): Monday–Friday 1:30–3:30 PM, Sunday 10:30–11:30 AM.
+  // A session runs about 45 minutes, so the last start is 45 minutes
+  // before the window closes: 2:45 PM on weekdays, 10:45 AM Sunday.
+  var WEEKDAY_TIMES = ['1:30 PM','1:45 PM','2:00 PM','2:15 PM','2:30 PM','2:45 PM'];
+  var SUNDAY_TIMES = ['10:30 AM','10:45 AM'];
+  function renderFmsTimes(){
+    var wrap = $('fmsTimes');
+    if(!wrap) return;
+    wrap.innerHTML = '';
+    var hint = $('fmsPickDayFirst');
+    if(!fmsDay){ if(hint) hint.style.display = 'block'; return; }
+    if(hint) hint.style.display = 'none';
+    var times = (fmsDay === 'Sunday') ? SUNDAY_TIMES : WEEKDAY_TIMES;
+    times.forEach(function(t){
+      var b = document.createElement('button');
+      b.className = 'chip' + (fmsTime === t ? ' selected' : '');
+      b.type = 'button';
+      b.textContent = t;
+      b.addEventListener('click', function(){
+        fmsTime = t;
+        renderFmsTimes();
+      });
+      wrap.appendChild(b);
+    });
+  }
+  var dayChips = all('#fmsDays .chip');
+  for(var d = 0; d < dayChips.length; d++){
+    (function(chip){
+      chip.addEventListener('click', function(){
+        fmsDay = chip.getAttribute('data-day');
+        fmsTime = '';
+        for(var k = 0; k < dayChips.length; k++) dayChips[k].classList.toggle('selected', dayChips[k] === chip);
+        renderFmsTimes();
+      });
+    })(dayChips[d]);
+  }
   var modalRetry = $('modalRetryBtn');
   if(modalRetry) modalRetry.addEventListener('click', handleModalRetry);
   var closeTab = $('closeTabBtn');
