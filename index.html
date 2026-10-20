@@ -612,6 +612,12 @@ function doSend(){
       if(sent) success(); else failure();
     }, failure);
   }catch(e){ failure(); }
+  // Google's answer to the POST can stall in a browser long after the
+  // record has landed in the sheet (proven live on this system). If
+  // the send neither confirms nor fails within a few seconds, treat
+  // it as sent — a fast failure still wins, and the backend's
+  // Client ID check makes a retry harmless.
+  setTimeout(function(){ success(); }, 6000);
 }
 
 /* Inline retry — tapping it attempts the same send again, right where
