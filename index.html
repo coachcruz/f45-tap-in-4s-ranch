@@ -65,6 +65,15 @@
     padding:12px 14px; border-radius:12px;}
   .hint b{color:var(--cream);}
   .error{margin-top:10px; font-size:14px; line-height:1.5; color:#ffb3ba;}
+  .ack{display:flex; gap:12px; align-items:center; width:100%; margin-top:16px; padding:13px 14px;
+    border-radius:12px; border:1.5px solid var(--line); background:rgba(0,0,0,.22); color:var(--cream);
+    cursor:pointer; text-align:left; appearance:none; -webkit-appearance:none; touch-action:manipulation;
+    font:inherit;}
+  .ack .box{width:24px; height:24px; flex:0 0 24px; border-radius:6px; border:2px solid var(--cream-dim);
+    display:grid; place-items:center; color:transparent; font-weight:900; font-size:15px;}
+  .ack.on{border-color:var(--red);}
+  .ack.on .box{background:var(--red); border-color:var(--red); color:#fff;}
+  body.light .ack{background:rgba(0,0,0,.22); color:#f5f2ea;}
   .status{margin-top:12px; font-size:14px; line-height:1.5; color:var(--cream-dim); min-height:1.2em;}
   .tile-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;}
   .tile{appearance:none; -webkit-appearance:none; touch-action:manipulation; border:1.5px solid var(--line); background:rgba(0,0,0,.22); color:var(--cream);
@@ -184,17 +193,19 @@
     </div>
   </section>
 
-  <!-- 2 REASON — tapping a tile IS the contact-share gesture -->
+  <!-- 2 REASON -->
   <section class="stage" id="s-reason">
     <div class="kicker">First visit</div>
     <h1>Why are you<br>here today?</h1>
     <div class="card">
-      <p class="prompt-sub" style="margin-top:0">Tap your reason — your phone will share your name, phone &amp; email. No typing unless you pick Other.</p>
+      <p class="prompt-sub" style="margin-top:0">Tap your reason, then add your name, phone &amp; email — your phone can AutoFill them for you.</p>
       <div class="tile-grid" role="group" aria-label="Reason for visit">
-        <button class="tile" type="button" data-reason="Passport">Passport</button>
+        <button class="tile" type="button" data-reason="3-Day Trial">3-Day Trial</button>
         <button class="tile" type="button" data-reason="ClassPass">ClassPass</button>
-        <button class="tile tile-wide" type="button" data-reason="Drop-in">Drop-in</button>
-        <button class="tile tile-wide" type="button" data-reason="Other">Other</button>
+        <button class="tile" type="button" data-reason="Passport">Passport</button>
+        <button class="tile" type="button" data-reason="Walk-In">Walk-In</button>
+        <button class="tile" type="button" data-reason="Referral">Referral</button>
+        <button class="tile" type="button" data-reason="Other">Other</button>
       </div>
 
       <div id="otherWrap" style="display:none">
@@ -212,11 +223,16 @@
       <p class="status" id="reasonStatus" role="status"></p>
 
       <div id="contactWrap" style="display:none">
-        <div class="hint" id="pickerHint" role="status"><b>iPhone:</b> tap a field and choose your phone’s AutoFill suggestion — name, phone &amp; email fill in together.</div>
+        <div class="hint" id="pickerHint" role="status">Tap a field and choose your phone’s AutoFill suggestion — name, phone &amp; email can fill in together.</div>
         <div class="field"><label for="f-name">Full name</label><input id="f-name" type="text" autocomplete="name" placeholder="Your name"></div>
         <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" autocomplete="tel" placeholder="(555) 123-4567"></div>
         <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" placeholder="you@email.com"></div>
         <p class="error" id="contactError" style="display:none">Please add your name, phone, and email to continue.</p>
+        <button type="button" class="ack" id="ackWaiver">
+          <span class="box">✓</span>
+          <span><b>I agree to the Liability Waiver</b></span>
+        </button>
+        <p class="error" id="waiverError" style="display:none">Please tap the waiver box above to continue.</p>
         <button class="btn btn-red" id="contactContinueBtn" type="button">Continue</button>
       </div>
     </div>
@@ -245,8 +261,8 @@
 
   <!-- 4 DONE -->
   <section class="stage" id="s-done">
-    <div class="kicker">You're tapped in</div>
-    <h1>Enjoy<br>class.</h1>
+    <div class="kicker">Almost done</div>
+    <h1>Check your<br>details.</h1>
     <div class="card done-details">
       <div class="done-head">
         <img class="done-photo" id="d-photo" alt="Your profile photo" style="display:none">
@@ -255,7 +271,7 @@
       <div class="rev-row" style="margin-top:10px"><span class="k">Phone</span><span class="v" id="d-phone">—</span></div>
       <div class="rev-row"><span class="k">Email</span><span class="v" id="d-email">—</span></div>
       <div class="rev-row"><span class="k">Reason</span><span class="v" id="d-reason">—</span></div>
-      <p class="sub" style="margin-top:14px">Thank you — please see your coach for further instructions.</p>
+      <p class="sub" style="margin-top:14px">One more step — a question pops up next. Answer it and tap Done to finish checking in.</p>
     </div>
   </section>
 
@@ -265,7 +281,7 @@
 <!-- CONFIRMATION MODAL — appears after the Done screen renders -->
 <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
   <div class="modal-panel">
-    <h2 class="modal-title" id="confirmTitle">You're all set!</h2>
+    <h2 class="modal-title" id="confirmTitle">Almost done!</h2>
     <p class="modal-text">Please talk to your coach for further instructions.</p>
     <p class="modal-text">Enjoy your class.</p>
     <div id="modalActions">
@@ -309,7 +325,10 @@
 <script>
 var selectedReason = '';
 var otherText = '';
-var captured = { name:'', phone:'', email:'' };
+var captured = { name:'', phone:'', email:'', waiver:'' };
+/* One id per page load, sent with the record. Retries reuse it, so the
+   backend can spot a retry of the same tap-in and skip the duplicate. */
+var clientId = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
 var photoUrl = '';
 
 function $(id){ return document.getElementById(id); }
@@ -423,6 +442,14 @@ function continueFromContact(){
     return;
   }
   $('contactError').style.display = 'none';
+  if(!$('ackWaiver').classList.contains('on')){
+    // The waiver comes before the workout — nobody continues without it.
+    $('waiverError').style.display = 'block';
+    setTimeout(function(){ $('ackWaiver').focus(); }, 60);
+    return;
+  }
+  $('waiverError').style.display = 'none';
+  captured.waiver = 'agreed';
   go('s-photo');
 }
 
@@ -489,7 +516,9 @@ function submitTapInRecord(movementAssessment){
     phone: captured.phone || '',
     email: captured.email || '',
     reason: (r === '—') ? '' : r,
-    movementAssessment: movementAssessment
+    movementAssessment: movementAssessment,
+    waiver: captured.waiver || '',
+    clientId: clientId
   };
   // Convert photo to downscaled base64 JPEG so it actually reaches the backend.
   return photoToBase64().then(function(photoData){
@@ -624,9 +653,12 @@ var fmsAnswer = ''; // 'yes' or 'no'
 
 function handleModalDone(){
   // Yes = completed, No = not completed (with optional scheduling).
-  // Never blocks — the tap-in always sends.
-  var movement = 'completed';
-  if(fmsAnswer === 'no'){
+  // Never blocks — the tap-in always sends. No answer is recorded
+  // honestly as "not answered", never assumed to be "completed".
+  var movement = 'not answered';
+  if(fmsAnswer === 'yes'){
+    movement = 'completed';
+  } else if(fmsAnswer === 'no'){
     var day = $('fmsDay') ? $('fmsDay').value : '';
     var time = $('fmsTime') ? $('fmsTime').value : '';
     movement = 'not completed';
@@ -650,6 +682,11 @@ function handleModalDone(){
   $('f-other').addEventListener('input', updateOtherContinue);
   $('otherContinueBtn').addEventListener('click', proceedFromReason);
   $('contactContinueBtn').addEventListener('click', continueFromContact);
+  var ackWaiver = $('ackWaiver');
+  if(ackWaiver) ackWaiver.addEventListener('click', function(){
+    ackWaiver.classList.toggle('on');
+    $('waiverError').style.display = 'none';
+  });
   $('photoInput').addEventListener('change', onPhotoCaptured);
   $('openCameraBtn').addEventListener('click', openCamera);
   $('retakeBtn').addEventListener('click', openCamera);
